@@ -59,6 +59,7 @@ public class ProductoController {
                 ProductoExistente.setMarca(producto_editado.getMarca());
                 ProductoExistente.setPrecioBase(producto_editado.getPrecioBase());
                 ProductoExistente.setCategoria(producto_editado.getCategoria());
+                ProductoExistente.setPortada(producto_editado.getPortada());
                 ProductoExistente.setImagen_principal(producto_editado.getImagen_principal());
                 ProductoExistente.setIs_active(producto_editado.getIs_active());
                 ProductoExistente.setCreatedAt(producto_editado.getCreatedAt());

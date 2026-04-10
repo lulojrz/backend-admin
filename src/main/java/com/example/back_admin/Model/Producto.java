@@ -49,6 +49,17 @@ public class Producto {
     @Column(name= "is_active")
     private Boolean is_active;
 
+    public Boolean getPortada() {
+        return portada;
+    }
+
+    public void setPortada(Boolean portada) {
+        this.portada = portada;
+    }
+
+    @Column(name = "portada")
+    private Boolean portada;
+
 
 
 

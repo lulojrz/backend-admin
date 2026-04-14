@@ -75,9 +75,10 @@ public class UsuarioController {
     public List<Usuario> obtenerTodos() {
         return usuarioRepository.findAll();
     }
-    @GetMapping("/find/usuarios")
-    public Optional<Usuario> encontrarUsuario(@RequestParam String usuario){
-       return  usuarioRepository.findByUsuario(usuario);
+    @PostMapping("/find/usuarios")
+    public Optional<Usuario> encontrarUsuario(@RequestBody Usuario usuario){
+        String nombre_usuario = usuario.getUsuario();
+       return  usuarioRepository.findByUsuario(nombre_usuario);
     }
 
     @PostMapping("/registro")

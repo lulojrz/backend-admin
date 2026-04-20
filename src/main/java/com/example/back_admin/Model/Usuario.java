@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "usuarios")
-@Data // Esto genera getters, setters, equals, canEqual, hashCode y toString
+@Data
 @NoArgsConstructor // Necesario para JPA
 @AllArgsConstructor // Útil para crear objetos rápido
 public class Usuario {

@@ -30,6 +30,6 @@ public class Cliente {
     protected void onCreate() {
         this.fecha = LocalDateTime.now();
     }
-    private Byte activo;
+    private Integer activo;
 
 }

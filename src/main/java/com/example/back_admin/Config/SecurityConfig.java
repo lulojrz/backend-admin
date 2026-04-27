@@ -27,7 +27,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1. ESTA ES LA LÍNEA QUE TE FALTA: Activa el CORS usando tu Bean de abajo
+
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 .csrf(csrf -> csrf.disable())

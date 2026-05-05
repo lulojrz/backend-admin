@@ -2,6 +2,7 @@ package com.example.back_admin.Controller;
 
 
 import com.example.back_admin.Model.Cliente;
+import com.example.back_admin.Model.JwtUtil;
 import com.example.back_admin.Model.Usuario;
 import com.example.back_admin.Repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -23,6 +27,8 @@ public class ClienteController {
     private ClienteRepository clienteRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping("todos")
     public List<Cliente> obtenerClientes(){
@@ -68,19 +74,34 @@ public class ClienteController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> inicioSesion(@RequestBody Cliente usuario) {
-        Optional<Cliente> Usuario_encontrado = clienteRepository.findByUsuario(usuario.getUsuario());
+    public ResponseEntity<?> inicioSesion(@RequestBody Cliente usuario) {
+        Optional<Cliente> encontrado = clienteRepository.findByUsuario(usuario.getUsuario());
 
-        if (Usuario_encontrado.isPresent()) {
-            Cliente usuario_db = Usuario_encontrado.get();
+        if (encontrado.isPresent() && passwordEncoder.matches(usuario.getPassword(), encontrado.get().getPassword())) {
 
-            if (passwordEncoder.matches(usuario.getPassword(), usuario_db.getPassword())) {
-                return ResponseEntity.ok("login exitoso"); // Status 200
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("contraseña incorrecta"); // Status 401
-            }
+            String token = jwtUtil.generateToken(usuario.getUsuario());
+
+
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            response.put("usuario", usuario.getUsuario());
+
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado"); // Status 404
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
         }
+    }
+
+
+    @GetMapping("/perfil")
+    public ResponseEntity<?> obtenerPerfil(Principal principal) {
+        // Principal contiene el "subject" que pusimos en el token (el nombre de usuario)
+        Optional<Cliente> cliente = clienteRepository.findByUsuario(principal.getName());
+        if(cliente.isPresent()){
+            cliente.get().setPassword(null);// Seguridad: nunca mandes el hash al front
+            System.out.println("Datos del cliente a enviar: " + cliente.get().toString()); // Esto usa el @Data de Lombok
+            return ResponseEntity.ok(cliente.get());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

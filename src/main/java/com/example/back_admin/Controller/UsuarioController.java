@@ -1,5 +1,6 @@
 package com.example.back_admin.Controller;
 
+import com.example.back_admin.Model.JwtUtil;
 import com.example.back_admin.Model.Usuario;
 import com.example.back_admin.Repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,6 +24,8 @@ public class UsuarioController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/verificacion/{id}")
     public String verificarContraseña(@PathVariable Integer id, @RequestBody Map<String, String> body) {
@@ -100,22 +104,28 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Usuario loginRequest) {
+    public ResponseEntity<?> login(@RequestBody Usuario loginRequest) {
 
-        Optional<Usuario> usuarioOptional = usuarioRepository.findByUsuario(loginRequest.getUsuario());
-
-
-        if (usuarioOptional.isPresent()) {
-            Usuario usuarioBD = usuarioOptional.get();
+        Optional<Usuario> encontrado = usuarioRepository.findByUsuario(loginRequest.getUsuario());
 
 
-            if (passwordEncoder.matches(loginRequest.getPassword(), usuarioBD.getPassword())) {
-                return ResponseEntity.ok("Login exitoso");
-            }
+
+        if (encontrado.isPresent() && passwordEncoder.matches(loginRequest.getPassword(), encontrado.get().getPassword())) {
+
+            String token = jwtUtil.generateToken(loginRequest.getUsuario());
+
+
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            response.put("usuario", loginRequest.getUsuario());
+
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
         }
 
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario o contraseña incorrectos");
+
     }
 
 

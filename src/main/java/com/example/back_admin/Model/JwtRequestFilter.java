@@ -54,7 +54,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         null,
                         List.of(
                                 new SimpleGrantedAuthority("ROLE_USER"),
-                                new SimpleGrantedAuthority("ROLE_ADMIN")
+                                new SimpleGrantedAuthority("ROLE_ADMIN"),
+                                new SimpleGrantedAuthority("ROLE_EMPLOYEER")
                         )
                 );
 

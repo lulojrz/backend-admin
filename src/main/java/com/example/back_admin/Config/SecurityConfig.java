@@ -32,8 +32,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Rutas que no piden Token
-                        .requestMatchers("/clientes/login", "/clientes/agregar","/productos","/api/login","/api/find/usuarios").permitAll()
-                        .requestMatchers("/api/usuarios").hasRole("ADMIN")
+                        .requestMatchers("/clientes/login", "/clientes/agregar","/productos","/api/login","/api/find/usuarios", "api/editar/usuario/{id}").permitAll()
+                        .requestMatchers("/api/usuarios","/api/verificacion/{id}","/api/registro","api/eliminar/{id}","/productos/{id}","/productos/variante/{id}").hasRole("ADMIN")
+                        .requestMatchers("/productos/{id}","/productos/variante/{id}").hasRole("EMPLOYEER")
                 )
                 // IMPORTANTE: Sin estado (Stateless)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -118,6 +118,7 @@ public class UsuarioController {
             Map<String, String> response = new HashMap<>();
             response.put("token", token);
             response.put("usuario", loginRequest.getUsuario());
+            response.put("rol",loginRequest.getRol());
 
             return ResponseEntity.ok(response);
         } else {

@@ -31,16 +31,39 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Rutas que no piden Token
-                        .requestMatchers("/clientes/login", "/clientes/agregar","/productos","/api/login","/api/find/usuarios", "api/editar/usuario/{id}").permitAll()
-                        .requestMatchers("/api/usuarios","/api/verificacion/{id}","/api/registro","api/eliminar/{id}","/productos/{id}","/productos/variante/{id}").hasRole("ADMIN")
-                        .requestMatchers("/productos/{id}","/productos/variante/{id}").hasRole("EMPLOYEER")
-                )
-                // IMPORTANTE: Sin estado (Stateless)
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
+                        // 1. Rutas Públicas (Siempre con / al principio)
+                        .requestMatchers(
+                                "/clientes/login",
+                                "/clientes/agregar",
+                                "/api/login",
+                                "/productos",
+                                "/productos/{id}"
+                        ).permitAll()
 
-        // Ponemos nuestro filtro de JWT antes del filtro de usuario/password
+                        // 2. Rutas para Clientes Autenticados o Administradores
+                        // Agregamos la barra / inicial a confirmar
+                        .requestMatchers("/clientes/{id}", "/confirmar/venta").permitAll()
+
+                        // 3. Rutas exclusivas de Empleados
+                        .requestMatchers("/productos/variante/{id}").hasRole("EMPLOYEER")
+
+                        // 4. Rutas exclusivas de ADMIN (Agregadas las / faltantes)
+                        .requestMatchers(
+                                "/api/usuarios",
+                                "/api/verificacion/{id}",
+                                "/api/registro",
+                                "/api/eliminar/{id}",
+                                "/api/editar/usuario/{id}", // Agregada /
+                                "/api/find/usuarios",
+                                "/productos/variante",
+                                "/productos/categorias",
+                                "/clientes/todos"
+                        ).hasRole("ADMIN")
+
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

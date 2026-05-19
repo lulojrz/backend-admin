@@ -3,7 +3,6 @@ package com.example.back_admin.Controller;
 
 import com.example.back_admin.Model.Cliente;
 import com.example.back_admin.Model.JwtUtil;
-import com.example.back_admin.Model.Usuario;
 import com.example.back_admin.Repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +28,11 @@ public class ClienteController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtUtil jwtUtil;
+
+    @GetMapping("/{id}")
+    public Optional<Cliente> obtenerCliente(@PathVariable Integer id){
+       return  clienteRepository.findById(id);
+    }
 
     @GetMapping("todos")
     public List<Cliente> obtenerClientes(){
@@ -85,6 +89,7 @@ public class ClienteController {
             Map<String, String> response = new HashMap<>();
             response.put("token", token);
             response.put("usuario", usuario.getUsuario());
+            response.put("id", Integer.toString(encontrado.get().getId()));
 
             return ResponseEntity.ok(response);
         } else {

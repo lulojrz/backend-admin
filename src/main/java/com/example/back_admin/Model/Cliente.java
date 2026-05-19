@@ -22,6 +22,7 @@ public class Cliente {
     private String apellido;
     private String email;
     private String password;
+    private String rol;
     private String telefono;
     @Column(name = "fecha_registro", nullable = false, updatable = false)
     private LocalDateTime fecha;

@@ -35,14 +35,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // 2. Extraer Token
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
-            try {
-                username = jwtUtil.extractUsername(jwt);
-                System.out.println("DEBUG: Usuario en token -> " + username);
-            } catch (Exception e) {
-                System.out.println("DEBUG: Error al procesar token -> " + e.getMessage());
-            }
+            username = jwtUtil.extractUsername(jwt);
+            System.out.println("DEBUG: Token recibido para el usuario: " + username); // <--- AGREGÁ ESTO
         }
-
         // 3. Autenticar si el token es válido
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (jwtUtil.validateToken(jwt, username)) {

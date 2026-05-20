@@ -37,12 +37,11 @@ public class SecurityConfig {
                                 "/clientes/agregar",
                                 "/api/login",
                                 "/productos",
-                                "/productos/{id}"
+                                "/productos/{id}",
+                                "/clientes/{id}", "/confirmar/venta","/confirmar/detalles"
                         ).permitAll()
 
-                        // 2. Rutas para Clientes Autenticados o Administradores
-                        // Agregamos la barra / inicial a confirmar
-                        .requestMatchers("/clientes/{id}", "/confirmar/venta").permitAll()
+
 
                         // 3. Rutas exclusivas de Empleados
                         .requestMatchers("/productos/variante/{id}").hasRole("EMPLOYEER")

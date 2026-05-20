@@ -25,7 +25,7 @@ public class DetalleVentas {
     @JoinColumn(name = "variante_id", nullable = false)
     private Producto_variantes variante;
     @ManyToOne
-    @JoinColumn(name = "producto_id",nullable = false)
+    @JoinColumn(name = "producto_id",nullable = true)
     private Producto producto;
 
 

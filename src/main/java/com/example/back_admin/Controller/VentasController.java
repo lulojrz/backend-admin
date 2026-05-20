@@ -1,7 +1,6 @@
 package com.example.back_admin.Controller;
 
 import com.example.back_admin.Model.DetalleVentas;
-import com.example.back_admin.Model.Producto_variantes;
 import com.example.back_admin.Model.Venta;
 import com.example.back_admin.Repository.Producto_variantesRepository;
 import com.example.back_admin.Repository.VentasDetalleRepository;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -67,4 +67,31 @@ public class VentasController {
         }
     }
 
+    @PostMapping("/detalles")
+    @Transactional
+    public ResponseEntity<?> enviarDetalles(@RequestBody List<DetalleVentas> detalles) {
+        try {
+            if (detalles == null || detalles.isEmpty()) {
+                return ResponseEntity.badRequest().body("Error: La lista de detalles está vacía.");
+            }
+
+            System.out.println(">>> Guardando " + detalles.size() + " detalles de venta...");
+
+            for (DetalleVentas detalle : detalles) {
+                // Imprimimos para debuggear qué está llegando
+                System.out.println(">>> Procesando variante ID: " +
+                        (detalle.getVariante() != null ? detalle.getVariante().getId() : "NULL"));
+
+                ventasDetalleRepository.save(detalle);
+            }
+
+            System.out.println(">>> Todos los detalles se guardaron exitosamente en la DB.");
+            return ResponseEntity.ok().body("{\"message\": \"Detalles registrados correctamente\"}");
+
+        } catch (Exception e) {
+            System.err.println(">>> ERROR EN DETALLES: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error al guardar detalles: " + e.getMessage());
+        }
+    }
 }

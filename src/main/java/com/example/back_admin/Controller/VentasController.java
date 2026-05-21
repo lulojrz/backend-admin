@@ -94,4 +94,9 @@ public class VentasController {
             return ResponseEntity.internalServerError().body("Error al guardar detalles: " + e.getMessage());
         }
     }
+
+    @GetMapping("/ventasRealizadas")
+    public List<Venta> obtenerVentas(){
+        return ventasRepository.findAll();
+    }
 }

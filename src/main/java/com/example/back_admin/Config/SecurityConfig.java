@@ -17,6 +17,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 @Configuration
 @EnableWebSecurity
@@ -38,7 +39,8 @@ public class SecurityConfig {
                                 "/api/login",
                                 "/productos",
                                 "/productos/{id}",
-                                "/clientes/{id}", "/confirmar/venta","/confirmar/detalles"
+                                "/clientes/{id}", "/confirmar/venta","/confirmar/detalles",
+                                "/api/find/usuarios"
                         ).permitAll()
 
 
@@ -53,10 +55,10 @@ public class SecurityConfig {
                                 "/api/registro",
                                 "/api/eliminar/{id}",
                                 "/api/editar/usuario/{id}", // Agregada /
-                                "/api/find/usuarios",
                                 "/productos/variante",
                                 "/productos/categorias",
                                 "/clientes/todos"
+                                ,"/confirmar/ventasRealizadas"
                         ).hasRole("ADMIN")
 
                         .anyRequest().authenticated()

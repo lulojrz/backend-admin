@@ -58,7 +58,8 @@ public class SecurityConfig {
                                 "/productos/variante",
                                 "/productos/categorias",
                                 "/clientes/todos"
-                                ,"/confirmar/ventasRealizadas"
+                                ,"/confirmar/ventasRealizadas",
+                                "/obtenerDetalles/{id}"
                         ).hasRole("ADMIN")
 
                         .anyRequest().authenticated()

@@ -40,13 +40,15 @@ public class SecurityConfig {
                                 "/productos",
                                 "/productos/{id}",
                                 "/clientes/{id}", "/confirmar/venta","/confirmar/detalles",
-                                "/api/find/usuarios"
+                                "/api/find/usuarios",
+                                "/clientes/email"
                         ).permitAll()
 
 
 
                         // 3. Rutas exclusivas de Empleados
                         .requestMatchers("/productos/variante/{id}").hasRole("EMPLOYEER")
+                        .requestMatchers("/confirmar/venta/cliente/{id}","/clientes/editar/{id}","/clientes/verificar/{id}").hasRole("USER")
 
                         // 4. Rutas exclusivas de ADMIN (Agregadas las / faltantes)
                         .requestMatchers(

@@ -3,6 +3,7 @@ package com.example.back_admin.Controller;
 
 import com.example.back_admin.Model.Cliente;
 import com.example.back_admin.Model.JwtUtil;
+import com.example.back_admin.Model.Usuario;
 import com.example.back_admin.Repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,56 @@ public class ClienteController {
     @GetMapping("/{id}")
     public Optional<Cliente> obtenerCliente(@PathVariable Integer id){
        return  clienteRepository.findById(id);
+    }
+    @PostMapping("verificar/{id}")
+    public String verificarContraseña(@PathVariable Integer id, @RequestBody Map<String, String> body){
+        String passwordEntrante = body.get("password");
+
+        Cliente cliente_existente= clienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+
+        if (passwordEncoder.matches(passwordEntrante, cliente_existente.getPassword())) {
+            return "exito";
+        } else {
+            return "fallo";
+        }
+    }
+
+    @PostMapping("email")
+    public String obtenerEmail(@RequestBody String usuario){
+        Optional<Cliente> cliente= clienteRepository.findByUsuario(usuario);
+
+        return cliente.get().getEmail();
+
+
+    }
+
+    @PutMapping("/editar/{id}")
+    public Cliente editarUsuario(@PathVariable Integer id, @RequestBody Cliente cliente_nuevo){
+        return clienteRepository.findById(id).map(cliente ->
+        {
+            cliente.setUsuario(cliente_nuevo.getUsuario());
+            cliente.setNombre(cliente_nuevo.getNombre());
+            cliente.setApellido(cliente_nuevo.getApellido());
+            cliente.setEmail(cliente_nuevo.getEmail());
+            cliente.setPassword(cliente_nuevo.getPassword());
+            cliente.setRol(cliente_nuevo.getRol());
+            cliente.setTelefono(cliente_nuevo.getTelefono());
+            cliente.setFecha(cliente_nuevo.getFecha());
+            cliente.setActivo(cliente_nuevo.getActivo());
+
+            String passRecibida = cliente_nuevo.getPassword();
+
+
+            if (passRecibida == null || passRecibida.trim().isEmpty()) {
+
+            } else if (!passRecibida.startsWith("$2a$")) {
+                cliente.setPassword(passwordEncoder.encode(passRecibida));
+            }
+            return clienteRepository.save(cliente);
+        }).orElseThrow(() -> new RuntimeException("No existe el cliente"));
+
     }
 
     @GetMapping("todos")

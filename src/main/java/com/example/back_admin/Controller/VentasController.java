@@ -99,6 +99,11 @@ public class VentasController {
     public List<Venta> obtenerVentas(){
         return ventasRepository.findAll();
     }
+    @GetMapping("/venta/cliente/{id}")
+    public List<Venta> obtenerVentaporCliente(@PathVariable Integer id) {
+
+        return ventasRepository.findByClienteId(id);
+    }
     @GetMapping("/obtenerDetalles/{id}")
     public List<DetalleVentas> obtenerDetallesVenta(@PathVariable Integer id){
         return  ventasDetalleRepository.obtenerDetalleporID(id);

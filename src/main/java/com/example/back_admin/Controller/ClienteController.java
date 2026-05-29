@@ -48,14 +48,29 @@ public class ClienteController {
             return "fallo";
         }
     }
+    @PostMapping(value = "/email", produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> obtenerEmail(@RequestBody Map<String,String> payload) {
+        try {
+            // 1. Extraemos el usuario que viene en el JSON de React
+            String usuario = payload.get("usuario");
 
-    @PostMapping("email")
-    public String obtenerEmail(@RequestBody String usuario){
-        Optional<Cliente> cliente= clienteRepository.findByUsuario(usuario);
+            if (usuario == null || usuario.isEmpty()) {
+                return ResponseEntity.badRequest().body("Error: El campo 'usuario' es obligatorio");
+            }
 
-        return cliente.get().getEmail();
+            // 2. Buscamos en la base de datos
+            Optional<Cliente> cliente = clienteRepository.findByUsuario(usuario);
 
+            // 3. Retornamos solo el String del email o el error correspondiente
+            if (cliente.isPresent()) {
+                return ResponseEntity.ok(cliente.get().getEmail()); // <-- Acá devuelve solo el texto del email
+            } else {
+                return ResponseEntity.status(404).body("Error: Usuario no encontrado");
+            }
 
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error en el servidor: " + e.getMessage());
+        }
     }
 
     @PutMapping("/editar/{id}")

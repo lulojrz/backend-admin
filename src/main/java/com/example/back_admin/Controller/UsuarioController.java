@@ -36,6 +36,8 @@ public class UsuarioController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
 
+
+
         if (passwordEncoder.matches(passwordEntrante, usuarioExistente.getPassword())) {
             return "exito";
         } else {

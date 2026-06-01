@@ -45,8 +45,6 @@ public class VentasController {
                 return ResponseEntity.badRequest().body("Error: Los datos de la venta o el ID del cliente son nulos.");
             }
 
-            System.out.println(">>> Iniciando registro de cabecera de venta para cliente ID: " + venta.getCliente().getId());
-
             // Aseguramos la fecha del servidor por si acaso
             if (venta.getFecha() == null) {
                 venta.setFecha(java.time.LocalDateTime.now());
@@ -54,7 +52,6 @@ public class VentasController {
 
             // Guardamos únicamente la cabecera en la tabla 'ventas'
             Venta ventaGuardada = ventasRepository.save(venta);
-            System.out.println(">>> Cabecera de venta guardada exitosamente con ID: " + ventaGuardada.getId());
 
             // Importante: Devolvemos el objeto guardado completo (o al menos su ID)
             // para que desde React sepas qué 'venta_id' asignarle a los detalles después.
@@ -75,17 +72,10 @@ public class VentasController {
                 return ResponseEntity.badRequest().body("Error: La lista de detalles está vacía.");
             }
 
-            System.out.println(">>> Guardando " + detalles.size() + " detalles de venta...");
-
             for (DetalleVentas detalle : detalles) {
-                // Imprimimos para debuggear qué está llegando
-                System.out.println(">>> Procesando variante ID: " +
-                        (detalle.getVariante() != null ? detalle.getVariante().getId() : "NULL"));
-
                 ventasDetalleRepository.save(detalle);
             }
 
-            System.out.println(">>> Todos los detalles se guardaron exitosamente en la DB.");
             return ResponseEntity.ok().body("{\"message\": \"Detalles registrados correctamente\"}");
 
         } catch (Exception e) {

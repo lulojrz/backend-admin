@@ -26,8 +26,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         // 1. SIEMPRE imprimimos para saber si la petición llegó al servidor
-        System.out.println(">>> Interceptando: " + request.getMethod() + " " + request.getRequestURI());
-
         final String authorizationHeader = request.getHeader("Authorization");
         String username = null;
         String jwt = null;
@@ -36,7 +34,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             username = jwtUtil.extractUsername(jwt);
-            System.out.println("DEBUG: Token recibido para el usuario: " + username); // <--- AGREGÁ ESTO
         }
         // 3. Autenticar si el token es válido
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -57,7 +54,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-                System.out.println("DEBUG: Autenticación exitosa para " + username);
             }
         }
 

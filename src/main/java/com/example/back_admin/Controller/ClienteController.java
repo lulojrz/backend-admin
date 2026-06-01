@@ -170,7 +170,6 @@ public class ClienteController {
         Optional<Cliente> cliente = clienteRepository.findByUsuario(principal.getName());
         if(cliente.isPresent()){
             cliente.get().setPassword(null);// Seguridad: nunca mandes el hash al front
-            System.out.println("Datos del cliente a enviar: " + cliente.get().toString()); // Esto usa el @Data de Lombok
             return ResponseEntity.ok(cliente.get());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

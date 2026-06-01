@@ -44,7 +44,6 @@ public class ProductoController {
     @DeleteMapping("/{id}")
     public void eliminarProducto(@PathVariable Long id){
         productoRepository.deleteById(id);
-        System.out.println("eliminado con exito");
 
     }
     @GetMapping("/{id}")

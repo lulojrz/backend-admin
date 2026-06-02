@@ -4,7 +4,7 @@ import com.example.back_admin.Model.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.http.HttpMethod; // <-- IMPORTANTE
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,7 +17,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.Locale;
 
 @Configuration
 @EnableWebSecurity
@@ -32,35 +31,38 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // 1. Rutas Públicas (Siempre con / al principio)
+                        // ¡EL ESCUDO MAESTRO!: Permitir todas las peticiones de chequeo CORS (OPTIONS)
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // 1. Rutas Públicas
                         .requestMatchers(
                                 "/clientes/login",
                                 "/clientes/agregar",
                                 "/api/login",
                                 "/productos",
                                 "/productos/{id}",
-                                "/clientes/{id}", "/confirmar/venta","/confirmar/detalles",
+                                "/clientes/{id}", 
+                                "/confirmar/venta",
+                                "/confirmar/detalles",
                                 "/api/find/usuarios",
                                 "/clientes/email"
                         ).permitAll()
-
-
 
                         // 3. Rutas exclusivas de Empleados
                         .requestMatchers("/productos/variante/{id}").hasRole("EMPLOYEER")
                         .requestMatchers("/confirmar/venta/cliente/{id}","/clientes/editar/{id}","/clientes/verificar/{id}").hasRole("USER")
 
-                        // 4. Rutas exclusivas de ADMIN (Agregadas las / faltantes)
+                        // 4. Rutas exclusivas de ADMIN
                         .requestMatchers(
                                 "/api/usuarios",
                                 "/api/verificacion/{id}",
                                 "/api/registro",
                                 "/api/eliminar/{id}",
-                                "/api/editar/usuario/{id}", // Agregada /
+                                "/api/editar/usuario/{id}", 
                                 "/productos/variante",
                                 "/productos/categorias",
-                                "/clientes/todos"
-                                ,"/confirmar/ventasRealizadas",
+                                "/clientes/todos",
+                                "/confirmar/ventasRealizadas",
                                 "/obtenerDetalles/{id}"
                         ).hasRole("ADMIN")
 
@@ -81,10 +83,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174", "https://ecommerce-lulojrz.netlify.netlify.app", // Tu URL de Netlify sin el / final
-                "https://ecommerce-lulojrz.netlify.app"        ));
+        config.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173", 
+                "http://localhost:5174", 
+                "https://ecommerce-lulojrz.netlify.app" // URL limpia corregida
+        ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control")); // Agregado Cache-Control por si las moscas
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
